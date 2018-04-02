@@ -1,68 +1,72 @@
 package com.minimizer;
 
-import java.io.*;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.*;
+
 
 public class DFA_Minimizer {
 
-    private static void minimize() throws IOException {
-        BufferedReader scan = null;
-        try {
-            scan = new BufferedReader(new FileReader("before_minimization"));
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
+    static int start; //stores the id of the start state
+    static Set<String> inputSymbols; // stores the set of input symbols
+    static State dfa[]; //stores all the states data
+    static Group final_states; //group of final states
+    static Group non_final_states; //group of non-final states
 
-        int n = Integer.parseInt(scan.readLine());
-        State dfa[] = new State[n];
-        for (int i = 0; i < n; i++) {
-            dfa[i] = new State(i);
-        }
+    public static void minimize() throws IOException {
 
-        String temp;
+        //take all the inputs from file "before_minimization"
+        Main.input("before_minimization");
+        start = Main.start;
+        inputSymbols = Main.inputSymbols;
+        dfa = Main.dfa;
+        final_states = Main.final_states;
+        non_final_states = Main.non_final_states;
 
-        temp = scan.readLine();
-        int start = Integer.parseInt(temp.substring(6));
 
-        temp = scan.readLine();
-        while (!temp.startsWith("final")) {
-            StringTokenizer st = new StringTokenizer(temp);
-
-            int from = Integer.parseInt(st.nextToken());
-            String at = st.nextToken();
-            int to = Integer.parseInt(st.nextToken());
-            dfa[from].put(at, dfa[to]);
-            temp = scan.readLine();
-        }
-
+        //list of all groups
         List<Group> groups = new ArrayList<>();
 
-        Group f = new Group(0);
-        StringTokenizer st = new StringTokenizer(temp);
-        st.nextToken();
-        while (st.hasMoreTokens()) {
-            f.add(dfa[Integer.parseInt(st.nextToken())]);
+        // stores the group of non final states
+        non_final_states = new Group(1);
+
+
+        for (State s : dfa) {       // for each state s in dfa
+            /*
+             * all states that are not present in final
+             * state group are added in non-final group
+             */
+            if (!final_states.contains(s))
+                non_final_states.add(s);
         }
 
-        Group nf = new Group(1);
-        for (State s : dfa) {
-            if (!f.contains(s))
-                nf.add(s);
-        }
+        //add final and the non-final group in the list of groups
+        groups.add(final_states);
+        groups.add(non_final_states);
 
-        groups.add(f);
-        groups.add(nf);
+        //initial set of groups
         System.out.println("initially - \n" + groups);
+
+        //remove all the states from the groups that are unreachable
         groups = removeUnreachableStates(groups, dfa, start);
+
+        //set of groups after removing unreachable states
         System.out.println("removed unreachable - \n" + groups);
         System.out.println();
+
+        //minimize all the groups
         groups = minimize(groups);
+
+        //set of minimized groups
         System.out.println("minimized - \n" + groups);
 
-        new com.graphics.MainFrame("before_minimization", "BEFORE MINIMIZATION");
+        //draw the DFA before minimization
+        new com.graphics.MainFrame(
+                "before_minimization", "BEFORE MINIMIZATION");
 
-        //mapping
 
+        //map all different groups to a specific integer that is there id
         Map<Integer, Integer> map = new HashMap<>();
         int idx = 0;
         for (Group g : groups) {
@@ -74,7 +78,7 @@ public class DFA_Minimizer {
 
         PrintWriter pw = new PrintWriter(new FileWriter("after_minimization"));
 
-        pw.println(idx);
+        //store all the set of transitions after minimization
         Set<String> trans = new HashSet<>();
         for (Group g : groups) {
             for (State s : g) {
@@ -86,146 +90,34 @@ public class DFA_Minimizer {
                 }
             }
         }
-        pw.println("start " + map.get(start));
+
+        //write all the minimized DFA's data to the file named "after_minimization"
+        pw.println(idx); //number of states after minimization
+        pw.println("start " + map.get(start)); // print "start "+id of start state
         for (String s : trans) {
             pw.println(s);
         }
 
+        //write all the ids of final state
         pw.print("final ");
-        for (State s : f) {
+        for (State s : final_states) {
             pw.print(" " + map.get(s.id));
         }
         pw.close();
-        new com.graphics.MainFrame("after_minimization", "AFTER MINIMIZATION");
+
+        //draw the DFA after minimization
+        new com.graphics.MainFrame(
+                "after_minimization", "AFTER MINIMIZATION");
     }
 
+    /*
+     * Breadth First Search implementation to remove unreachable states
+     * returns list of groups free from unreachable states
+     * */
+    private static List<Group> removeUnreachableStates(
+            List<Group> groups, State dfa[], int start) {
 
-    public static void main(String[] args) throws IOException {
-
-        Scanner sc = new Scanner(System.in);
-        System.out.println("1 - NFA to DFA");
-        System.out.println("2 - Minimize DFA");
-
-        int choice = sc.nextInt();
-
-        if (choice == 1) {
-            nfa_to_dfa();
-        } else {
-            minimize();
-        }
-
-    }
-
-    private static void nfa_to_dfa() throws IOException {
-
-        BufferedReader scan = null;
-        try {
-            scan = new BufferedReader(new FileReader("input"));
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
-
-        int n = Integer.parseInt(scan.readLine());
-        State dfa[] = new State[n];
-        for (int i = 0; i < n; i++) {
-            dfa[i] = new State(i);
-        }
-
-        String temp;
-
-        temp = scan.readLine();
-        int start = Integer.parseInt(temp.substring(6));
-
-        Set<String> inputSymbols = new HashSet<>();
-
-        temp = scan.readLine();
-        while (!temp.startsWith("final")) {
-            StringTokenizer st = new StringTokenizer(temp);
-
-            int from = Integer.parseInt(st.nextToken());
-            String at = st.nextToken();
-            int to = Integer.parseInt(st.nextToken());
-            inputSymbols.add(at);
-            dfa[from].put(at, dfa[to]);
-            temp = scan.readLine();
-        }
-
-        List<Group> groups = new ArrayList<>();
-
-        Set<State> f = new HashSet<>();
-        StringTokenizer st = new StringTokenizer(temp);
-        st.nextToken();
-        while (st.hasMoreTokens()) {
-            f.add(dfa[Integer.parseInt(st.nextToken())]);
-        }
-
-        String output = "";
-        output = output + "start " + start + "\n";
-
-        Map<String, Integer> map = new HashMap<>();
-
-        map.put(start + "", 0);
-        int idx = 1;
-        LinkedList<String> queue = new LinkedList<>();
-        queue.add(start + "");
-
-        String fstate = "final";
-        boolean finalState;
-
-        while (!queue.isEmpty()) {
-            char state[] = queue.poll().toCharArray();
-
-            for (String is : inputSymbols) {
-                String tmp = "";
-                finalState = false;
-
-                for (char ch : state) {
-                    //System.out.println(dfa[ch - 48]);
-                    if (dfa[ch - 48].transitions.get(is) != null)
-                        for (State i : dfa[ch - 48].transitions.get(is)) {
-                            tmp += i.id;
-                            if (f.contains(i))
-                                finalState = true;
-                        }
-                }
-                char array[] = tmp.toCharArray();
-                Arrays.sort(array);
-                tmp = new String(array);
-
-                if (!map.containsKey(tmp)) {
-                    queue.add(tmp);
-                    map.put(tmp, idx++);
-
-                    if (finalState) {
-                        fstate = fstate + " " + map.get(tmp);
-                    }
-                }
-
-                output = output + map.get(String.valueOf(state)) + " " + is + " " + map.get(tmp) + "\n";
-
-            }
-        }
-
-        output = idx + "\n" + output;
-        output = output + fstate+"\n";
-
-        System.out.println(output);
-
-        PrintWriter pw = new PrintWriter(new FileWriter("dfa"));
-        pw.println(output);
-        pw.close();
-        new com.graphics.MainFrame("input", "NFA");
-        new com.graphics.MainFrame("dfa", "DFA");
-
-
-
-    }
-
-
-    private static List<Group> removeUnreachableStates(List<Group> groups, State dfa[], int start) {
-        //breadth first search to get reachable states
         boolean reachable[] = new boolean[dfa.length];
-
         reachable[start] = true;
         List<State> queue = new LinkedList<>();
         queue.add(dfa[start]);
@@ -246,6 +138,7 @@ public class DFA_Minimizer {
             }
         }
 
+        //remove all the states that are not visible/reachable
         System.out.println(Arrays.toString(reachable));
         for (int i = 0; i < dfa.length; i++) {
             if (!reachable[i]) {
@@ -254,63 +147,111 @@ public class DFA_Minimizer {
                 }
             }
         }
+
         return groups;
     }
 
-
+    /*
+     * Recursive function
+     * to minimize the number of states
+     * until they can be divided
+     *
+     * return a list of groups of states what are similar
+     * and can be showed as a single state
+     */
     private static List<Group> minimize(List<Group> groups) {
         System.out.println(groups);
+
+        //list of groups after division of groups
         List<Group> result = new ArrayList<>();
-        boolean unique;
+
         int idx = 0;
-        for (Group g : groups) {
+
+        for (Group g : groups) { //for all Group g in groups
             if (g.size() > 1) {
                 for (int i = 0; i < g.size(); i++) {
 
+                    /*
+                     * if the result group already contains the current
+                      * group then we need not to check it
+                     */
                     if (containsState(result, g.get(i))) {
                         continue;
                     }
 
+                    /*
+                     * a new group to store states that are
+                     * not unique among the current group g
+                     */
                     Group new_group = new Group(idx++);
                     new_group.add(g.get(i));
 
                     for (int j = i + 1; j < g.size(); j++) {
-                        unique = true;
-                        for (Map.Entry<String, HashSet<State>> e : g.get(i).transitions.entrySet()) {
 
-                            for (State s : e.getValue()) {
-                                if (!containedBySameGroup(groups, s, g.get(j).transitions.get(e.getKey()))) {
-                                    unique = false;
+                        State state1 = g.get(i);
+                        State state2 = g.get(j);
 
-                                }
-                            }
-
-
-                        }
-                        if (unique) {
-                            new_group.add(g.get(j));
+                        /*
+                         * if any two states in the same group are not unique
+                         * then add the second state to a new group
+                         */
+                        if (!areStatesUnique(groups, state1, state2)) {
+                            new_group.add(state2);
                         }
                     }
+
+                    //add the new group to the result
                     result.add(new_group);
                 }
-            } else {
+            }
+            //when the group contains only one state
+            else {
                 result.add(new Group(g, idx++));
             }
         }
 
+        // if already minimized
         if (groups.size() == result.size()) return result;
 
+        // minimize further
         return minimize(result);
 
     }
 
-    private static boolean containsState(List<Group> result, State state) {
-        for (Group g : result) {
+
+    /*
+    * A function to check weather given
+    * two states are unique or not
+    * */
+    private static boolean areStatesUnique(List<Group> groups, State state1, State state2) {
+
+        for (Map.Entry<String, HashSet<State>> e : state1.transitions.entrySet()) {
+            for (State s : e.getValue()) {
+                if (!containedBySameGroup(groups, s, state2.transitions.get(e.getKey()))) {
+                    return true;
+                }
+            }
+        }
+        return false;
+
+    }
+
+    /*
+    * returns true if the given state is in the given list of groups
+    * */
+    private static boolean containsState(List<Group> groups, State state) {
+        for (Group g : groups) {
             if (g.contains(state)) return true;
         }
         return false;
     }
 
+    /*
+    * returns true if both the given states are in the same group
+    *
+    * Note - HashSet<State> s contains a single state only
+    *       A set of states was only created for the sake of calculation for NFAs
+    * */
     private static boolean containedBySameGroup(List<Group> groups, State s1, HashSet<State> s2) {
         for (Group g : groups) {
             if (g.contains(s1) && g.contains(s2)) {

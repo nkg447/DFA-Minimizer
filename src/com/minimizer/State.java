@@ -27,7 +27,6 @@ public class State {
         set.add(value);
         transitions.put(key,set);
 
-        //transitions.put(key,value);
     }
 
     @Override
