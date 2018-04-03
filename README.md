@@ -5,4 +5,4 @@ A java Program used to minimize a deterministic automata
 
 ### NFA to DFA
 
-![alt text](http://url/to/img.png)
+![alt tag](https://github.com/nkg447/DFA-Minimizer/raw/master/screenshots/nfa-dfa.png)
