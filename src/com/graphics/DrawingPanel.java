@@ -10,8 +10,8 @@ public class DrawingPanel extends JPanel {
 
     private DataCalculator d;
 
-    DrawingPanel() {
-        d= MainFrame.getDataCalculator();
+    DrawingPanel(String file) {
+        d= new DataCalculator(file);
         setLayout(null);
         setBackground(Color.WHITE);
         addMouseListener(new MouseAdapter() {

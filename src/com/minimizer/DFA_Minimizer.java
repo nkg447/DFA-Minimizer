@@ -24,6 +24,15 @@ public class DFA_Minimizer {
         final_states = Main.final_states;
         non_final_states = Main.non_final_states;
 
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                //draw the DFA before minimization
+                new com.graphics.MainFrame(
+                        "before_minimization", "BEFORE MINIMIZATION");
+            }
+        }).start();
+
 
         //list of all groups
         List<Group> groups = new ArrayList<>();
@@ -60,10 +69,6 @@ public class DFA_Minimizer {
 
         //set of minimized groups
         System.out.println("minimized - \n" + groups);
-
-        //draw the DFA before minimization
-        new com.graphics.MainFrame(
-                "before_minimization", "BEFORE MINIMIZATION");
 
 
         //map all different groups to a specific integer that is there id

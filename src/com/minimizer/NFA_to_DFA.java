@@ -23,6 +23,14 @@ public class NFA_to_DFA {
         final_states=Main.final_states;
         non_final_states=Main.non_final_states;
 
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                //draw NFA from file "nfa"
+                new com.graphics.MainFrame("nfa", "NFA");
+            }
+        }).start();
+
         //store the output dfa as it is stored in the file
         String output = "";
         output = output + "start " + start + "\n";
@@ -98,9 +106,6 @@ public class NFA_to_DFA {
         PrintWriter pw = new PrintWriter(new FileWriter("dfa"));
         pw.println(output);
         pw.close();
-
-        //draw NFA from file "nfa"
-        new com.graphics.MainFrame("nfa", "NFA");
 
         //draw DFA from file "dfa"
         new com.graphics.MainFrame("dfa", "DFA");

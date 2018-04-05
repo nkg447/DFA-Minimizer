@@ -5,15 +5,9 @@ import java.awt.event.WindowEvent;
 import javax.swing.JFrame;
 
 public class MainFrame extends JFrame {
-	
-	private static DataCalculator d;
-	static DataCalculator getDataCalculator(){
 
-		return d;
-	}
-	
 	public MainFrame(String file,String title) {
-		d = new DataCalculator(file);
+
 		this.setTitle(title);
 		//this.setLayout(null);
 		this.addWindowListener(new WindowAdapter() {
@@ -22,7 +16,7 @@ public class MainFrame extends JFrame {
 				System.exit(0);
 			}
 		});
-		add(new DrawingPanel());
+		add(new DrawingPanel(file));
 		setSize(DataCalculator.getDimensions());
 
 		setVisible(true);
