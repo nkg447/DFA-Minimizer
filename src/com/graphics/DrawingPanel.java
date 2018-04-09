@@ -14,12 +14,6 @@ public class DrawingPanel extends JPanel {
         d= new DataCalculator(file);
         setLayout(null);
         setBackground(Color.WHITE);
-        addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                System.out.println("clicked at - " + e.getPoint());
-            }
-        });
 
         JLabel l=new JLabel("starting state - "+d.getStart());
         l.setBounds(10,10,100,20);
