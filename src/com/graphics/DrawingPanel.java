@@ -87,7 +87,7 @@ public class DrawingPanel extends JPanel {
     }
 
     private void drawSelfLoops(Graphics g, SelfLoop s) {
-        System.out.println(s);
+        //System.out.println(s);
         g.setColor(getColor(s.id));
 
         g.drawArc(s.centre.x - s.radius, s.centre.y - s.radius, 2 * s.radius, 2 * s.radius, 112 - s.theta, -224);
@@ -111,7 +111,7 @@ public class DrawingPanel extends JPanel {
     }
 
     private void drawArrow(Graphics g, Arrow a) {
-        System.out.println(a);
+        //System.out.println(a);
         Color c = getColor(a.id);
         g.setColor(c);
         for (int i = 1; i < a.pts.size(); i++) {
@@ -125,7 +125,7 @@ public class DrawingPanel extends JPanel {
     }
 
     private void drawCircle(Graphics g, Circle c) {
-        System.out.println(c);
+        //System.out.println(c);
 
         if (c.isFinal()) {
             g.drawArc(c.centre.x - Circle.RADIUS + 5, c.centre.y - Circle.RADIUS + 5, Circle.DIAMETER - 10, Circle.DIAMETER - 10, 0, 360);

@@ -88,9 +88,9 @@ public class DataCalculator {
         transition = new ArrayList<>();
         scan.close();
 
-        for (String s[] : input) {
-            System.out.println(Arrays.toString(s));
-        }
+//        for (String s[] : input) {
+//            System.out.println(Arrays.toString(s));
+//        }
     }
 
     State[] getStates() {

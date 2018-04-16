@@ -1,4 +1,4 @@
-package com.db;
+package com.minimizer;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
