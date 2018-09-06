@@ -24,14 +24,9 @@ public class DFA_Minimizer {
         final_states = Main.final_states;
         non_final_states = Main.non_final_states;
 
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                //draw the DFA before minimization
-                new com.graphics.MainFrame(
-                        "before_minimization", "BEFORE MINIMIZATION");
-            }
-        }).start();
+        //draw the DFA before minimization
+        new com.graphics.MainFrame(
+                "before_minimization", "BEFORE MINIMIZATION");
 
 
         //list of all groups

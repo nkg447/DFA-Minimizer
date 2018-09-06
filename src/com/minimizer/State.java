@@ -5,16 +5,16 @@ import java.util.HashSet;
 import java.util.Map;
 
 public class State {
-    int id;
+    public int id;
     //Map<String,State> transitions;
-    Map<String,HashSet<State>> transitions;
+    public Map<String,HashSet<State>> transitions;
 
-    State(int i){
+    public State(int i){
         id=i;
         transitions=new HashMap<>();
     }
 
-    void put(String key,State value){
+    public void put(String key,State value){
 
         HashSet<State> set;
         if(transitions.containsKey(key)){

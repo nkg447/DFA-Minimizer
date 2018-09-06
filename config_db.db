@@ -1,0 +1,47 @@
+CREATE TABLE `transitions` (
+  `id`	INTEGER NOT NULL,
+  `from_id`	INTEGER NOT NULL,
+  `input_symbol`	TEXT NOT NULL,
+  `to_id`	INTEGER NOT NULL
+);
+
+-- type -
+-- 1 - DFA
+-- 2 - Min DFA
+-- 3 - NFA
+
+CREATE TABLE `automatas` (
+  `id`	INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,
+  `type`	INTEGER NOT NULL DEFAULT 1 CHECK(type in ( 1 , 2 , 3 )),
+  `description`	TEXT NOT NULL,
+  `regx`	TEXT,
+  `no_of_states`	INTEGER NOT NULL,
+  `start_state`	INTEGER NOT NULL,
+  `transitions`	INTEGER NOT NULL,
+  `final_states`	TEXT NOT NULL,
+  FOREIGN KEY(`transitions`) REFERENCES `transitions`(`id`)
+);
+
+-- adding an nfa for the language -
+-- third number from right 1
+
+-- 4
+-- start 0
+-- 0 0 0
+-- 0 1 0
+-- 0 1 1
+-- 1 0 2
+-- 1 1 2
+-- 2 0 3
+-- 2 1 3
+-- final 3
+
+INSERT INTO automatas VALUES(1,3,"third number from right 1","(0+1)*1(0+1)(0+1)" ,4,0,1,"3");
+
+INSERT INTO transitions VALUES(1,0,0,0);
+INSERT INTO transitions VALUES(1,0,1,0);
+INSERT INTO transitions VALUES(1,0,1,1);
+INSERT INTO transitions VALUES(1,1,0,2);
+INSERT INTO transitions VALUES(1,1,1,2);
+INSERT INTO transitions VALUES(1,2,0,3);
+INSERT INTO transitions VALUES(1,2,1,3);

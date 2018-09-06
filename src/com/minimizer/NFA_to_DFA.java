@@ -23,13 +23,9 @@ public class NFA_to_DFA {
         final_states=Main.final_states;
         non_final_states=Main.non_final_states;
 
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                //draw NFA from file "nfa"
-                new com.graphics.MainFrame("nfa", "NFA");
-            }
-        }).start();
+
+        //draw NFA from file "nfa"
+        new com.graphics.MainFrame("nfa", "NFA");
 
         //store the output dfa as it is stored in the file
         String output = "";
